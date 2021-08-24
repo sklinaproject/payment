@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 import ezinsurance.support.util.DateUtils;
 import java.math.BigDecimal;
 import lombok.Data;
+import org.springframework.util.StringUtils;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -35,7 +36,13 @@ public class Payment {
 
     @PrePersist
     public void onPrePersist(){
-		
+        
+        //십만원초과시 잔액부족
+        BigDecimal balnace = new BigDecimal("100000");
+        if(payAmt.compareTo(balnace) > 0 ) {
+            throw new RuntimeException("잔액부족 초과");
+        }
+
 		this.setActStcd("00");  //정상
 		this.setAnswCd("0000"); //정상
         this.setStaVrfcDtm(DateUtils.getCurDtm());
